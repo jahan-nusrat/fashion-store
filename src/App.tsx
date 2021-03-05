@@ -1,23 +1,33 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import Drawer from '@material-ui/core/Drawer';
+import LinearProgress from '@material-ui/core/LinearProgress';
+import Grid from '@material-ui/core/Grid';
+import Badge from '@material-ui/core/Badge';
+import AddShoppingCartIcon from '@material-ui/icons/AddShoppingCart';
+import { Wrapper } from './app.styles'
+import { useQuery } from 'react-query';
 
-function App() {
+interface CartItems {
+  id: number;
+  title: string;
+  price: number;
+  category: string;
+  image: string;
+  description: string;
+}
+
+const getProducts = async () : Promise<CartItems[]> => {
+  return await (await fetch('https://fakestoreapi.com/products')).json()
+}
+
+const App: React.FC = () : JSX.Element => {
+  const { data, isLoading, error } = useQuery<CartItems[]>('products', getProducts);
+  if(isLoading) return <LinearProgress />
+  if(error) return <div>Something went wrong</div>
+  console.log(data)
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+        Hello
       </header>
     </div>
   );
