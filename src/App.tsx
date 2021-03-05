@@ -7,6 +7,7 @@ import { Wrapper, StyledButton } from './app.styles'
 import { useQuery } from 'react-query';
 import Item from './Item/item'
 import { useState } from 'react';
+import { CartStyle } from './Cart/cart.styles'
 
 export interface CartItemsType {
   id: number;
@@ -15,6 +16,7 @@ export interface CartItemsType {
   category: string;
   image: string;
   description: string;
+  amount: number;
 }
 
 const getProducts = async () : Promise<CartItemsType[]> => {
@@ -28,7 +30,9 @@ const App: React.FC = () : JSX.Element => {
   if(isLoading) return <LinearProgress />
   if(error) return <div>Something went wrong</div>
   const handleAddtoCart =(clickedItem: CartItemsType): void => {};
-  const getTotalItems = (items: CartItemsType[]): void => {};
+  const getTotalItems = (items: CartItemsType[]): number => {
+    return items.reduce((acc:number, item) => acc + item.amount, 0);
+  }
 
   return (
     <Wrapper>
