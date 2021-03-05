@@ -3,10 +3,12 @@ import LinearProgress from '@material-ui/core/LinearProgress';
 import Grid from '@material-ui/core/Grid';
 import Badge from '@material-ui/core/Badge';
 import AddShoppingCartIcon from '@material-ui/icons/AddShoppingCart';
-import { Wrapper } from './app.styles'
+import { Wrapper, StyledButton } from './app.styles'
 import { useQuery } from 'react-query';
+import Item from './Item/item'
+import { useState } from 'react';
 
-interface CartItems {
+export interface CartItemsType {
   id: number;
   title: string;
   price: number;
@@ -15,21 +17,37 @@ interface CartItems {
   description: string;
 }
 
-const getProducts = async () : Promise<CartItems[]> => {
+const getProducts = async () : Promise<CartItemsType[]> => {
   return await (await fetch('https://fakestoreapi.com/products')).json()
 }
 
 const App: React.FC = () : JSX.Element => {
-  const { data, isLoading, error } = useQuery<CartItems[]>('products', getProducts);
+  const [openCart, setOpenCart] = useState<boolean>(false)
+  const [cartItems, setCartItems] = useState([] as CartItemsType[])
+  const { data, isLoading, error } = useQuery<CartItemsType[]>('products', getProducts);
   if(isLoading) return <LinearProgress />
   if(error) return <div>Something went wrong</div>
-  console.log(data)
+  const handleAddtoCart =(clickedItem: CartItemsType): void => {};
+  const getTotalItems = (items: CartItemsType[]): void => {};
+
   return (
-    <div className="App">
-      <header className="App-header">
-        Hello
-      </header>
-    </div>
+    <Wrapper>
+      <Drawer anchor='right' open={openCart} onClose={() => setOpenCart(false)}>
+        Cart items goes here
+      </Drawer>
+      <StyledButton onClick={() => setOpenCart(true)}>
+        <Badge color='error' badgeContent={() =>getTotalItems(cartItems)}>
+          <AddShoppingCartIcon />
+        </Badge>
+      </StyledButton>
+      <Grid container spacing={3}>
+        {data?.map ((item) => (
+          <Grid item key={item.id} xs={12} sm={4}>
+            <Item item={item} handleAddtoCart={handleAddtoCart} />
+          </Grid>
+        ))}
+      </Grid>
+    </Wrapper>
   );
 }
 
